@@ -35,7 +35,7 @@ class SitemapController(BaseController):
 
     @beaker_cache(expire=3600*24, type="dbm", invalidate_on_startup=True)
     def _render_sitemap(self):
-        other_urls = {"about":"/about", "contact":"/contact", "event":"/events"}
+        other_urls = {"about":"/about", "contact":"/contact", "summer-of-data-2021":"/events/summer-of-data-2021"}
         root = etree.Element("urlset", nsmap={None: SITEMAP_NS, 'xhtml': XHTML_NS})
         pkgs = Session.query(Package).filter(Package.type=='dataset').filter(Package.private!=True).\
             filter(Package.state=='active').all()
