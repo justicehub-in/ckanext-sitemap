@@ -35,6 +35,7 @@ class SitemapController(BaseController):
 
     @beaker_cache(expire=3600*24, type="dbm", invalidate_on_startup=True)
     def _render_sitemap(self):
+        other_urls = {"about":"/about", "contact":"/contact", "event":"/events"}
         root = etree.Element("urlset", nsmap={None: SITEMAP_NS, 'xhtml': XHTML_NS})
         pkgs = Session.query(Package).filter(Package.type=='dataset').filter(Package.private!=True).\
             filter(Package.state=='active').all()
@@ -56,6 +57,11 @@ class SitemapController(BaseController):
             #     self._create_language_alternatives(url_for(controller="package", action="resource_read",
             #                                                id=pkg.name, resource_id=res.id), url)
             #     lastmod.text = res.created.strftime('%Y-%m-%d')
+        for key, value in other_urls.items():
+	    url = etree.SubElement(root, 'url')
+	    loc = etree.SubElement(url, 'loc')
+	    loc.text = config.get('ckan.site_url') + value
+
         response.headers['Content-type'] = 'text/xml'
         return etree.tostring(root, pretty_print=True)
 
